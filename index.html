@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="theme-color" content="#101827">
+
+<title>DRIVEWISE | Better Checks. Smarter Choices.</title>
+
+<style>
+
+:root{--navy:#101827;--panel:#1b2638;--yellow:#ffd629;--white:#f8fafc;--muted:#aab5c5;--green:#36c98b}
+
+*{box-sizing:border-box}
+
+body{margin:0;background:var(--navy);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+
+header{padding:25px 20px 20px;border-bottom:1px solid #344055}
+
+.logo{font-size:27px;font-weight:900;letter-spacing:2px}.logo span{color:var(--yellow)}
+
+.tag{font-size:11px;letter-spacing:1.5px;color:var(--muted);margin-top:5px}
+
+main{max-width:650px;margin:auto;padding:20px}
+
+h1{font-size:27px;margin:8px 0}
+
+p{color:var(--muted);line-height:1.5}
+
+label{display:block;font-size:13px;margin:15px 0 7px;color:#dbe4ef}
+
+input,textarea,select{width:100%;padding:13px;border-radius:10px;border:1px solid #3b4960;background:#111c2c;color:white;font:inherit}
+
+button{font:inherit;cursor:pointer}
+
+.primary{background:var(--yellow);color:#101827;font-weight:800;border:0;padding:14px;border-radius:10px;width:100%;margin-top:14px}
+
+.card{background:var(--panel);padding:17px;border-radius:15px;margin:15px 0;border:1px solid #2d3a4f}
+
+.section-title{font-weight:800;font-size:18px;margin-bottom:10px}
+
+.check{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #344055;line-height:1.35}
+
+.check:last-child{border:0}
+
+.check input{width:21px;height:21px;accent-color:var(--yellow);flex-shrink:0}
+
+.small{font-size:12px;color:var(--muted)}
+
+.status{display:inline-block;background:#303b4e;padding:5px 9px;border-radius:7px;font-size:11px;color:var(--yellow);margin:3px 0 12px}
+
+.score{font-size:32px;font-weight:900;color:var(--yellow)}
+
+footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
+
+.hidden{display:none}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+  <div class="logo">DRIVE<span>WISE</span></div>
+
+  <div class="tag">BETTER CHECKS. SMARTER CHOICES.</div>
+
+</header>
+
+<main>
+
+  <div class="status">UK USED-CAR CHECKLIST</div>
+
+  <h1>Buy smarter. Check better.</h1>
+
+  <p>A practical inspection guide to help you ask the right questions before buying a used car.</p>
+
+  <div class="card">
+
+    <div class="section-title">Vehicle details</div>
+
+    <label for="vehicle">Make and model</label>
+
+    <input id="vehicle" placeholder="e.g. Volkswagen Golf">
+
+    <label for="reg">Registration</label>
+
+    <input id="reg" placeholder="Enter registration">
+
+    <label for="mileage">Mileage</label>
+
+    <input id="mileage" type="number" placeholder="e.g. 85000">
+
+    <label for="price">Asking price (£)</label>
+
+    <input id="price" type="number" placeholder="e.g. 6500">
+
+    <label for="seller">Seller type</label>
+
+    <select id="seller"><option>Choose seller</option><option>Dealer</option><option>Private seller</option></select>
+
+  </div>
+
+  <div id="sections"></div>
+
+  <div class="card">
+
+    <div class="section-title">Questions for the seller</div>
+
+    <p class="small">Ask these before committing to a purchase.</p>
+
+    <div class="check"><input type="checkbox"> <span>Can I see the service history and receipts?</span></div>
+
+    <div class="check"><input type="checkbox"> <span>Are there any known faults or warning lights?</span></div>
+
+    <div class="check"><input type="checkbox"> <span>How long have you owned the car?</span></div>
+
+    <div class="check"><input type="checkbox"> <span>Are there outstanding finance or insurance issues?</span></div>
+
+    <div class="check"><input type="checkbox"> <span>Can I arrange an independent inspection?</span></div>
+
+  </div>
+
+  <div class="card">
+
+    <div class="section-title">Inspection notes</div>
+
+    <textarea id="notes" rows="5" placeholder="Record concerns, repairs needed and questions..."></textarea>
+
+    <button class="primary" onclick="makeSummary()">Generate inspection summary</button>
+
+    <div id="summary" class="hidden">
+
+      <hr style="border-color:#3b4960;margin:20px 0">
+
+      <div class="score" id="score">0%</div>
+
+      <p id="resultText"></p>
+
+      <button class="primary" onclick="window.print()">Print / Save as PDF</button>
+
+      <button class="primary" onclick="downloadReport()">Download report</button>
+
+    </div>
+
+  </div>
+
+  <p class="small">DRIVEWISE is an inspection aid, not a mechanical guarantee. Checks cannot replace a qualified independent inspection, vehicle history checks or a professional roadworthiness assessment. Never drive a vehicle unless it is legal, insured and safe to do so.</p>
+
+</main>
+
+<footer>DRIVEWISE © 2026 · BETTER CHECKS. SMARTER CHOICES.</footer>
+
+<script>
+
+const groups={
+
+"Exterior":["Body panels and paint checked for damage or mismatched colour","Tyres checked for condition, damage and legal tread","Lights, indicators and mirrors working","Windscreen and windows checked for damage","Doors, boot and bonnet open and close properly"],
+
+"Engine bay":["Engine oil level and condition checked safely","Coolant level checked when engine is cold","No obvious leaks beneath engine bay","Battery secure and terminals look sound","No unusual smoke or obvious engine noises"],
+
+"Interior":["Warning lights checked during startup","Seat belts and seat adjustment working","Heating, ventilation and air conditioning tested","Windows, locks and infotainment checked","Boot and interior checked for damp or unusual smells"],
+
+"Test drive":["Brakes feel consistent and car stops safely","Steering feels normal and car tracks straight","No unusual engine, gearbox or suspension noises","Clutch and gear changes feel normal where applicable","No warning lights appear during the drive"],
+
+"Documents":["V5C details match vehicle and seller","MOT history checked where applicable","Service history and invoices reviewed","Vehicle identification number matches documents","Vehicle history and finance checks completed"]
+
+};
+
+const root=document.getElementById('sections');
+
+Object.entries(groups).forEach(([name,items],i)=>{
+
+const card=document.createElement('section');card.className='card';
+
+const title=document.createElement('div');title.className='section-title';title.textContent=name;card.appendChild(title);
+
+items.forEach(item=>{
+
+const row=document.createElement('label');row.className='check';
+
+const box=document.createElement('input');box.type='checkbox';box.className='inspection';
+
+box.dataset.group=name;
+
+const text=document.createElement('span');text.textContent=item;
+
+row.append(box,text);card.appendChild(row);
+
+});
+
+root.appendChild(card);
+
+});
+
+function makeSummary(){
+
+const all=[...document.querySelectorAll('.inspection')];
+
+const checked=all.filter(x=>x.checked).length;
+
+const percent=Math.round(checked/all.length*100);
+
+document.getElementById('score').textContent=percent+'%';
+
+document.getElementById('resultText').textContent=
+
+`${checked} of ${all.length} inspection checks marked complete. This percentage measures checklist completion only; it is not a vehicle condition or safety rating. Any unchecked item needs further checking.`;
+
+document.getElementById('summary').classList.remove('hidden');
+
+}
+
+function downloadReport(){
+
+const data={
+
+vehicle:document.getElementById('vehicle').value,
+
+registration:document.getElementById('reg').value,
+
+mileage:document.getElementById('mileage').value,
+
+price:document.getElementById('price').value,
+
+seller:document.getElementById('seller').value,
+
+checks:[...document.querySelectorAll('.inspection')].map(x=>({item:x.parentElement.innerText.trim(),checked:x.checked})),
+
+notes:document.getElementById('notes').value
+
+};
+
+const lines=['DRIVEWISE — USED CAR INSPECTION','BETTER CHECKS. SMARTER CHOICES.','',`Vehicle: ${data.vehicle}`,`Registration: ${data.registration}`,`Mileage: ${data.mileage}`,`Asking price: £${data.price}`,`Seller: ${data.seller}`,'','CHECKLIST',...data.checks.map(x=>`${x.checked?'[x]':'[ ]'} ${x.item}`),'','NOTES',data.notes,'','Checklist only; not a mechanical guarantee.'];
+
+const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+
+const url=URL.createObjectURL(blob);const a=document.createElement('a');
+
+a.href=url;a.download='drivewise-inspection.txt';a.click();URL.revokeObjectURL(url);
+
+}
+
+</script>
+
+</body>
+
+</html>
